@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zxy.hrm.checking.dao.LeaveRequestDao">
+    <insert id="saveLeaverequests" parameterType="java.util.List">
+        INSERT INTO LeaveRequests (name, id_card, start_time, end_time, reason, month,`type`,`years`)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name}, #{item.idCard}, #{item.startTime}, #{item.endTime}, #{item.reason}, #{item.month},#{item.type},#{item.years})
+        </foreach>
+    </insert>
+    <insert id="saveAttedanceBaseDate" parameterType="java.util.List">
+        INSERT INTO employeeattendancemonthly (id, id_card, name, year, month, day,status,`desc`,baseflag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.idCard}, #{item.name}, #{item.year}, #{item.month}, #{item.day},#{item.status},#{item.desc},#{item.baseflag})
+        </foreach>
+    </insert>
+
+    <insert id="saveMonthlyAttendances"  parameterType="java.util.List">
+        INSERT INTO monthly_attendance (id,
+        name, department, working_days, late_count, late_dates,
+        unsigned_in_count, unsigned_in_dates, unsigned_out_count, unsigned_out_dates,
+        early_leave_count, early_leave_dates, personal_leave_days, personal_leave_dates,
+        sick_leave_days, sick_leave_dates, marriage_leave_days, marriage_leave_dates,
+        bereavement_leave_days, bereavement_leave_dates, paternity_leave_days, paternity_leave_dates,
+        maternity_leave_days, maternity_leave_dates,id_card,years,months
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.name}, #{item.department}, #{item.workingDays}, #{item.lateCount}, #{item.lateDates},
+            #{item.unsignedInCount}, #{item.unsignedInDates}, #{item.unsignedOutCount}, #{item.unsignedOutDates},
+            #{item.earlyLeaveCount}, #{item.earlyLeaveDates}, #{item.personalLeaveDays}, #{item.personalLeaveDates},
+            #{item.sickLeaveDays}, #{item.sickLeaveDates}, #{item.marriageLeaveDays}, #{item.marriageLeaveDates},
+            #{item.bereavementLeaveDays}, #{item.bereavementLeaveDates}, #{item.paternityLeaveDays}, #{item.paternityLeaveDates},
+            #{item.maternityLeaveDays}, #{item.maternityLeaveDates},  #{item.idCard},  #{item.years},  #{item.months}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 插入LeaveRequest -->
+    <insert id="insertLeaveRequest" parameterType="com.zxy.hrm.checking.entity.LeaverequestExt">
+        INSERT INTO LeaveRequests (name, id_card, start_time, end_time, reason, month)
+        VALUES (#{name}, #{idCard}, #{startTime}, #{endTime}, #{reason}, #{month})
+    </insert>
+
+    <!-- 根据ID删除LeaveRequest -->
+    <delete id="deleteLeaveRequestById" parameterType="Long">
+        DELETE FROM LeaveRequests WHERE id = #{id}
+    </delete>
+
+    <!-- 更新LeaveRequest -->
+    <update id="updateLeaveRequest" parameterType="com.zxy.hrm.checking.entity.LeaverequestExt">
+        UPDATE LeaveRequests SET
+        name = #{name},
+        id_card = #{idCard},
+        start_time = #{startTime},
+        end_time = #{endTime},
+        reason = #{reason},
+        month = #{month}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询LeaveRequest -->
+    <select id="getLeaveRequestById" parameterType="Long" resultType="com.zxy.hrm.checking.entity.LeaverequestExt">
+        SELECT * FROM LeaveRequests WHERE id = #{id}
+    </select>
+    <select id="queryLeaveRequest" parameterType="com.zxy.hrm.checking.entity.Leaverequests" resultType="com.zxy.hrm.checking.entity.LeaverequestExt">
+        SELECT * FROM LeaveRequests
+        <where>
+            <if test="name != null and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                AND id_card = #{idCard}
+            </if>
+            <if test="type != null and type != ''">
+                AND `type` = #{type}
+            </if>
+            <if test="startTime != null">
+                AND start_time = #{startTime}
+            </if>
+        </where>
+        order by `name`,`type`,`start_time` desc
+    </select>
+
+    <select id="queryKaoQinRequest" parameterType="com.zxy.hrm.checking.entity.Employeeattendancemonthly" resultType="com.zxy.hrm.checking.entity.Employeeattendancemonthly">
+        SELECT * FROM Employeeattendancemonthly
+        <where>
+
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                AND id_card = #{idCard}
+            </if>
+            <if test="status != null and status != ''">
+                AND `status` = #{status}
+            </if>
+            <if test="year != null and year != ''">
+                AND `year` = #{year}
+            </if>
+            <if test="month != null and month != ''">
+                AND `month` = #{month}
+            </if>
+        </where>
+        order by `year`,`month`,`name`,`day` desc
+    </select>
+    <select id="queryHuiZongDetail" parameterType="com.zxy.hrm.checking.entity.MonthlyAttendance" resultType="com.zxy.hrm.checking.entity.MonthlyAttendance">
+        select * from monthly_attendance
+        <where>
+        <if test="name != null and name != ''">
+            AND `name` = #{name}
+        </if>
+        <if test="years != null and years != ''">
+            AND `years` = #{years}
+        </if>
+        <if test="months != null and months != ''">
+            AND `months` = #{months}
+        </if>
+            <if test="idCard != null and idCard != ''">
+                AND `id_card` = #{idCard}
+            </if>
+        </where>
+        order by `name`,years,months
+    </select>
+
+    <select id="queryDictTypeByCode" parameterType="string" resultType="com.zxy.hrm.checking.entity.Dictitem">
+        select b.* from dictname a left join dictitem b on a.id = b.parentId where a.dictcode = #{code}
+    </select>
+    <select id="queryEmpErrDays" parameterType="map" resultType="com.zxy.hrm.checking.entity.Employeeattendancemonthly">
+        select * from employeeattendancemonthly where  id_card = #{idCard}
+        and `desc` like '%${flag}%'
+        and `year` = ${year}
+        and `month` = ${month}
+           order by `day`
+    </select>
+    <select id="queryEmpErrDaysByWqd" parameterType="map" resultType="com.zxy.hrm.checking.entity.Employeeattendancemonthly">
+        select * from employeeattendancemonthly where (`desc` like '%未签到%' or `desc` like '%无记录%')
+        and id_card = #{idCard}
+
+        and `year` = ${year}
+        and `month` = ${month}
+        order by `day`,`month`,`year`
+    </select>
+    <select id="queryEmpErrDaysByWqt" parameterType="map" resultType="com.zxy.hrm.checking.entity.Employeeattendancemonthly">
+        select * from employeeattendancemonthly where (`desc` like '%未签离%' or `desc` like '%无记录%')
+        and id_card = #{idCard}
+
+        and `year` = ${year}
+        and `month` = ${month}
+           order by `day`
+    </select>
+    <select id="queryLeaveRequestByType" parameterType="map" resultType="com.zxy.hrm.checking.entity.LeaverequestExt">
+        select * from leaverequests where `years` = #{year} and  `month`=#{month} and id_card = #{idCard} and `type` = #{type}
+    </select>
+
+    <select id="queryLeaveRequestByErrDay" parameterType="map" resultType="com.zxy.hrm.checking.entity.LeaverequestExt">
+
+        select * from leaverequests where `years` = ${year}
+        and  `month`=${month}
+        and id_card = #{idCard}
+        and start_time &gt;= #{errDay} and  start_time &lt;= CONCAT(#{errDay}, ' 23:59:59')
+        and end_time &gt;= #{errDay}
+    </select>
+    <insert id="saveWorkTime" parameterType="com.zxy.hrm.checking.entity.WorkTimeEntity">
+        insert into worktime (deptName, morningStart, morningEnd, afternoonStart, afternoonEnd) values (
+        #{deptName},#{morningStart},#{morningEnd},#{afternoonStart},#{afternoonEnd}
+        );
+    </insert>
+    <select id="queryWorkTime" resultType="com.zxy.hrm.checking.entity.WorkTimeEntity">
+        select * from worktime order by id
+    </select>
+    <select id="queryWorkTimeByName" parameterType="string" resultType="com.zxy.hrm.checking.entity.WorkTimeEntity">
+        select * from worktime where deptName=#{deptName}
+    </select>
+    <update id="updateWorkTime" parameterType="com.zxy.hrm.checking.entity.WorkTimeEntity">
+        update worktime set morningStart =#{morningStart},morningEnd=#{morningEnd},afternoonStart = #{afternoonStart},afternoonEnd = #{afternoonEnd}  where
+        deptName = #{deptName}
+    </update>
+    <delete id="deleteWorkTime" parameterType="integer">
+        delete  from worktime where id = #{id}
+    </delete>
+    <select id="queryHoliday" resultType="com.zxy.hrm.checking.entity.Holidays">
+        select * from holidays order by holidayname,id
+    </select>
+    <insert id="saveHoliday" parameterType="com.zxy.hrm.checking.entity.Holidays">
+       insert into holidays (holidayname, holidaytime) values (#{holidayname},#{holidaytime});
+    </insert>
+    <delete id="deleteHoliday" parameterType="integer">
+        delete  from holidays where id = #{id}
+    </delete>
+    <!--清除请假表-->
+    <delete id="deleteLeaveRequestAll" >
+        delete  from leaverequests
+    </delete>
+    <!--清除符号表-->
+    <delete id="deleteEmployeeattendancemonthlyAll" >
+        delete  from employeeattendancemonthly
+    </delete>
+
+    <delete id="deleteMonthlyAttendanceAll" >
+        delete   from monthly_attendance
+    </delete>
+    <select id="queryFuhao" resultType="com.zxy.hrm.checking.entity.Dictitem">
+        select * from dictitem
+        <where>
+            <if test="dicttype!=null and dicttype!=''">
+                and dicttype like '%${dicttype}%'
+            </if>
+            <if test="dictValue!=null and dictValue!=''">
+                and dictValue like '%${dictValue}%'
+            </if>
+        </where>
+        order by seq
+    </select>
+    <insert id="saveFuhao" parameterType="com.zxy.hrm.checking.entity.Dictitem">
+       insert into dictitem (dicttype, dictValue,seq) values (#{dicttype},#{dictValue},#{seq});
+    </insert>
+    <delete id="deleteFuhao" parameterType="integer">
+        delete  from dictitem where id = #{id}
+    </delete>
+</mapper>

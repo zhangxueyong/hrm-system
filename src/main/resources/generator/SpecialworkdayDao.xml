@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generate.SpecialworkdayDao">
+  <resultMap id="BaseResultMap" type="generate.Specialworkday">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="specialworkname" jdbcType="VARCHAR" property="specialworkname" />
+    <result column="specialworktime" jdbcType="VARCHAR" property="specialworktime" />
+    <result column="deptRange" jdbcType="VARCHAR" property="deptrange" />
+  </resultMap>
+  <insert id="insert" parameterType="generate.Specialworkday">
+    insert into specialworkday (id, specialworkname, specialworktime, 
+      deptRange)
+    values (#{id,jdbcType=INTEGER}, #{specialworkname,jdbcType=VARCHAR}, #{specialworktime,jdbcType=VARCHAR}, 
+      #{deptrange,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="generate.Specialworkday">
+    insert into specialworkday
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="specialworkname != null">
+        specialworkname,
+      </if>
+      <if test="specialworktime != null">
+        specialworktime,
+      </if>
+      <if test="deptrange != null">
+        deptRange,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="specialworkname != null">
+        #{specialworkname,jdbcType=VARCHAR},
+      </if>
+      <if test="specialworktime != null">
+        #{specialworktime,jdbcType=VARCHAR},
+      </if>
+      <if test="deptrange != null">
+        #{deptrange,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

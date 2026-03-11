@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form " lay-filter="editFiled"  >
+    <div class="layui-form-item" >
+        <label class="layui-form-label required">特殊工作日名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="specialworkname" id = "holidayname" lay-verify="required"  lay-reqtext="不能为空" placeholder="请输入假日名" value=""
+                   class="layui-input">
+
+        </div>
+    </div>
+    <div class="layui-form-item" >
+        <label class="layui-form-label required">适用机构</label>
+        <div class="layui-input-inline">
+            <select name="deptrange" lay-filter="aihao">
+                <option value="全部">全部</option>
+                <option value="科室">科室</option>
+                <option value="初中">初中</option>
+                <option value="高中">高中</option>
+                <option value="职教">职教</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">工作日期</label>
+        <div class="layui-input-inline">
+            <input type="text" name="specialworktime" id="holidaytime" lay-verify="不能为空" placeholder="yyyy-MM-dd"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+<script src="/lib/layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer
+            , laydate = layui.laydate;
+        $ = layui.$;
+
+        //日期
+        laydate.render({
+            elem: '#holidaytime',
+            trigger: 'click',
+            type: 'date', //设置日期类型
+            format: 'yyyy-MM-dd'
+        });
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+
+            $.post("/checking/saveSpecialWorkDay",data.field,function(res){
+                if(res.code==200){
+                    debugger
+                    layer.msg("保存成功");
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    parent.layui.table.reload("test");
+                }else{
+                    layer.msg("保存失败");
+                }
+            });
+               
+
+
+
+
+            return false;
+        });
+
+    });
+    function child(dataFromFather) {
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form
+                , layer = layui.layer;
+
+            // 表格赋值
+            form.val('editFiled', {
+                "holidayname": dataFromFather.holidayname,
+                "holidaytime": dataFromFather.holidaytime,
+
+              //  "sendPhone": dataFromFather.sendPhone,
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

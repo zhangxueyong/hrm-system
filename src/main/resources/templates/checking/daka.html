@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui/css/layui.css" media="all">
+
+    <link rel="stylesheet" href="/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">身份证</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="idCard" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">考勤状态</label>
+                            <div class="layui-input-inline">
+                                <select name="status" lay-filter="aihao">
+                                    <option value=""></option>
+                                    <option value="0">正常</option>
+                                    <option value="1">异常</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">年</label>
+                            <div class="layui-input-inline">
+                                <select name="year" lay-filter="aihao">
+                                    <option value=""></option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">月份</label>
+                            <div class="layui-input-inline">
+                                <select name="month" lay-filter="aihao">
+                                    <option value=""></option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        </div>
+
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="import"> 导入数据 </button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="edit"> 清空数据 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">请假详情</a>
+<!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+        </script>
+
+    </div>
+</div>
+<script src="/lib/layui/layui.js" charset="utf-8"></script>
+<!--<script src="/lib/jq-module/zyupload/zyupload-1.0.0.min.js" charset="utf-8"></script>-->
+<!--<script src="/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>-->\
+<script type="text/html" id="table-gender">
+    {{# if(d.gender=== 0) { }}  // 可以用 === 来表示等于
+    否
+    {{# } else if(d.gender== 1) { }} // 也可以用 == 来表示等于，效果相差不大
+    是
+    {{# } else { }}
+    未知
+    {{# } }}
+</script>
+
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+//  {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+        table.render({
+            elem: '#currentTableId',
+            url: '/checking/queryKaoQinRequest',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'id', minWidth: 80, title: 'ID', sort: true,hide:true},
+                {field: 'name', minWidth: 120, title: '姓名',sort: true},
+                {field: 'idCard', minWidth: 180, title: '身份证号', sort: true},
+                {field: 'year', minWidth: 80, title: '年'},
+                {field: 'month', minWidth: 80, title: '月'},
+                {field: 'day', title: '日',minWidth: 80},
+                {field: 'baseflag', minWidth: 240, title: '考勤符号', sort: true},
+                {field: 'desc', minWidth: 360, title: '描述', sort: true},
+                {field: 'status', minWidth: 80, title: '是否异常', sort: true,template:function(d){
+
+                    if(d.value() == 1){return '是'}else{return '否'}}}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            // layer.alert(result, {
+            //     title: '最终的搜索信息'
+            // });
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            debugger
+            if (obj.event === 'import') {  // 监听添加操作
+                var index = layer.open({
+                    title: '导入数据',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['50%', '50%'],
+                    content: '/checking/importDakaBaseDate.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'edit') {  // 监听删除操作
+                layer.confirm('确定后将删除所有数据，是否确定删除？', function (index) {
+                    $.get("/checking/deleteEmployeeattendancemonthlyAll",function(res){
+                        debugger
+                        if(res.code==200){
+
+                            layer.msg("删除成功");
+
+                            table.reload("currentTableId");
+                        }else{
+                            layer.msg("删除失败");
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+
+                var index = layer.open({
+                    title: '编辑用户',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '../page/table/edit.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    obj.del();
+                    layer.close(index);
+                });
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

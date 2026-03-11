@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxy.hrm.checking.dao.SpecialholidayDao">
+  <resultMap id="BaseResultMap" type="com.zxy.hrm.checking.entity.Specialholiday">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="starttime" jdbcType="VARCHAR" property="starttime" />
+    <result column="endtime" jdbcType="VARCHAR" property="endtime" />
+    <result column="specialname" jdbcType="VARCHAR" property="specialname" />
+    <result column="deptname" jdbcType="VARCHAR" property="deptname" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, starttime, endtime, specialname
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from specialholiday
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from specialholiday
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zxy.hrm.checking.entity.Specialholiday" useGeneratedKeys="true">
+    insert into specialholiday (starttime, endtime, specialname,deptname
+      )
+    values (#{starttime,jdbcType=VARCHAR}, #{endtime,jdbcType=VARCHAR}, #{specialname,jdbcType=VARCHAR}, #{deptname,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zxy.hrm.checking.entity.Specialholiday" useGeneratedKeys="true">
+    insert into specialholiday
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="starttime != null">
+        starttime,
+      </if>
+      <if test="endtime != null">
+        endtime,
+      </if>
+      <if test="specialname != null">
+        specialname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="starttime != null">
+        #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="specialname != null">
+        #{specialname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zxy.hrm.checking.entity.Specialholiday">
+    update specialholiday
+    <set>
+      <if test="starttime != null">
+        starttime = #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null">
+        endtime = #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="specialname != null">
+        specialname = #{specialname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zxy.hrm.checking.entity.Specialholiday">
+    update specialholiday
+    set starttime = #{starttime,jdbcType=VARCHAR},
+      endtime = #{endtime,jdbcType=VARCHAR},
+      specialname = #{specialname,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="querySpecialHoliday" parameterType="string" resultType="com.zxy.hrm.checking.entity.Specialholiday">
+        select * from specialholiday
+        <where>
+            <if test="specialname !=null and specialname!=''">
+                specialname lile '%${specialname}%'
+            </if>
+        </where>
+        order by deptname
+  </select>
+</mapper>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/lib/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form " lay-filter="editFiled"  >
+    <div class="layui-form-item" >
+        <label class="layui-form-label required">特殊假期名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="specialname" lay-verify="required"  lay-reqtext="不能为空" placeholder="请输入名称" value=""
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" >
+        <label class="layui-form-label required">机构分类</label>
+        <div class="layui-input-inline">
+            <select name="deptname" lay-filter="aihao">
+                <option value="科室">科室</option>
+                <option value="初中">初中</option>
+                <option value="高中">高中</option>
+                <option value="职教">职教</option>
+
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">假期开始时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="starttime" id="starttime" lay-verify="不能为空" placeholder="yyyy-mm-dd HH:mm"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">假期结束时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="endtime" id="endtime" lay-verify="不能为空" placeholder="yyyy-mm-dd HH:mm"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+<script src="/lib/layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer
+            , laydate = layui.laydate;
+        $ = layui.$;
+
+        //日期
+        laydate.render({
+            elem: '#starttime',
+            trigger: 'click',
+            type: 'datetime', //设置日期类型
+            format: 'yyyy-MM-dd HH:mm'
+        });
+        laydate.render({
+            elem: '#endtime',
+            trigger: 'click',
+            type: 'datetime', //设置日期类型
+            format: 'yyyy-MM-dd HH:mm'
+        });
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+
+            $.post("/checking/saveSpecialHoliday",data.field,function(res){
+                if(res.code==0){
+                    debugger
+                    layer.msg("保存成功");
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    parent.layui.table.reload("test");
+                }else{
+                    layer.msg("保存失败");
+                }
+            });
+               
+
+
+
+
+            return false;
+        });
+
+    });
+    function child(dataFromFather) {
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form
+                , layer = layui.layer;
+
+            // 表格赋值
+            form.val('editFiled', {
+                "deptName": dataFromFather.deptName,
+                "morningStart": dataFromFather.morningStart,
+                "morningEnd": dataFromFather.morningEnd,
+                "afternoonStart": dataFromFather.afternoonStart,
+                "afternoonEnd": dataFromFather.afternoonEnd,
+              //  "sendPhone": dataFromFather.sendPhone,
+            });
+        });
+    }
+
+</script>
+</body>
+</html>
